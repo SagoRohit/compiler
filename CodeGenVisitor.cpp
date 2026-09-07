@@ -186,14 +186,7 @@ std::any CodeGenVisitor::visitStatement(CSubsetParser::StatementContext* ctx) {
     }
     if (ctx->PRINTLN()) {
         annotateLine(line);
-        std::string id = ctx->ID()->getText();
-        CGSymbol* sym = scope.lookup(id);
-        if (sym) {
-            emit("MOV EAX, " + sym->operand);
-            emit("CALL OUTDEC");
-        } else {
-            emitComment("[warn] undeclared identifier '" + id + "' in println");
-        }
+        printArguments(ctx->arguments());
         return {};
     }
     if (ctx->RETURN()) {
@@ -400,4 +393,9 @@ std::any CodeGenVisitor::visitFactor(CSubsetParser::FactorContext* ctx) {
     CGSymbol* sym = resolveVariable(ctx->variable());
     emit("MOV EAX, " + (sym ? sym->operand : "0"));
     return {};
+}
+void CodeGenVisitor::printArguments(CSubsetParser::ArgumentsContext* ctx) {
+    if (ctx->arguments()) printArguments(ctx->arguments());  // earlier args first
+    visit(ctx->logic_expression());                          // -> EAX
+    emit("CALL OUTDEC");
 }

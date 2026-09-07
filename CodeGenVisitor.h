@@ -71,4 +71,5 @@ private:
     void genCompare(CSubsetParser::Simple_expressionContext* left,
                      CSubsetParser::Simple_expressionContext* right,
                      const std::string& op);
+    void printArguments(CSubsetParser::ArgumentsContext* ctx);
 };

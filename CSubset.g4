@@ -67,7 +67,7 @@ statement
     | IF LPAREN expression RPAREN statement ELSE statement
     | IF LPAREN expression RPAREN statement
     | WHILE LPAREN expression RPAREN statement
-    | PRINTLN LPAREN ID RPAREN SEMICOLON
+    | PRINTLN LPAREN arguments RPAREN SEMICOLON
     | RETURN expression SEMICOLON
     | GOTO ID SEMICOLON
     | ID COLON

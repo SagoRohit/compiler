@@ -69,6 +69,8 @@ statement
     | WHILE LPAREN expression RPAREN statement
     | PRINTLN LPAREN ID RPAREN SEMICOLON
     | RETURN expression SEMICOLON
+    | GOTO ID SEMICOLON
+    | ID COLON
     ;
 
 expression_statement
@@ -83,7 +85,8 @@ variable
 
 expression
     : logic_expression
-    | variable ASSIGNOP logic_expression
+    | variable ASSIGNOP expression
+    | variable COMPOUND_ASSIGNOP logic_expression
     ;
 
 logic_expression

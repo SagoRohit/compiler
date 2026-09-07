@@ -35,6 +35,8 @@ LTHIRD   : '[' ;
 RTHIRD   : ']' ;
 SEMICOLON: ';' ;
 COMMA    : ',' ;
+GOTO     : 'goto' ;
+COLON    : ':' ;
 
 ADDOP    : [+\-] ;
 MULOP    : [*/%] ;
@@ -44,6 +46,7 @@ NOT      : '!' ;
 RELOP    : '<=' | '==' | '>=' | '>' | '<' | '!=' ;
 LOGICOP  : '&&' | '||' ;
 ASSIGNOP : '=' ;
+COMPOUND_ASSIGNOP : '+=' | '-=' | '*=' | '/=' | '%=' ;
 
 // ------------------------------
 // Identifiers & numbers

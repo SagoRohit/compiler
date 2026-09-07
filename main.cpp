@@ -115,7 +115,7 @@ int main(int argc, const char* argv[]) {
     }
 
     ostringstream finalAsm;
-    finalAsm << "; Online ICG A1\n"
+    finalAsm << "; Online ICG B2\n"
              << "format ELF executable 3\n"
              << "entry main\n\n"
              << "segment readable writeable\n"

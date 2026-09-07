@@ -61,8 +61,8 @@ std::any CodeGenVisitor::visitVar_declaration(CSubsetParser::Var_declarationCont
 
 // ==================== declaration_list ====================
 std::any CodeGenVisitor::visitDeclaration_list(CSubsetParser::Declaration_listContext* ctx) {
-    if (ctx->declaration_list()) visit(ctx->declaration_list());
-
+    // if (ctx->declaration_list()) visit(ctx->declaration_list());
+    if(ctx->declaration_list()) visit(ctx->declaration_list());
     std::string name = ctx->ID()->getText();
     // LTHIRD / ASSIGNOP only ever appear together with CONST_INT in mutually
     // exclusive alternatives (array-size vs. initializer), so check the
@@ -207,6 +207,17 @@ std::any CodeGenVisitor::visitStatement(CSubsetParser::StatementContext* ctx) {
         emitComment("[Phase 2] control-flow statement not implemented in Phase 1");
         return {};
     }
+
+    if(ctx->GOTO()){
+        annotateLine(line);
+        std::string label = ctx->ID()->getText();
+        emit("JMP label_" + label);
+        return {};
+    }
+    if(ctx->COLON()){
+        emitLabel("label_"+ ctx->ID()->getText());
+        return {};
+    }
     return {};
 }
 
@@ -214,7 +225,34 @@ std::any CodeGenVisitor::visitStatement(CSubsetParser::StatementContext* ctx) {
 std::any CodeGenVisitor::visitExpression(CSubsetParser::ExpressionContext* ctx) {
     if (ctx->ASSIGNOP()) {
         CGSymbol* sym = resolveVariable(ctx->variable());
-        visit(ctx->logic_expression());
+        visit(ctx->expression());
+        if (sym) emit("MOV " + sym->operand + ", EAX");
+        return {};
+    }
+    if(ctx->COMPOUND_ASSIGNOP()){
+        CGSymbol* sym = resolveVariable(ctx->variable());
+
+        visit(ctx->logic_expression()); // visit right side
+        emit("PUSH EAX"); // save right side value
+        emit("MOV EAX," + (sym ? sym->operand: "0")); // left side eax save
+        emit("POP EBX"); // now right side->EBX
+
+        std::string op = ctx-> COMPOUND_ASSIGNOP()->getText();
+        if(op == "+="){
+            emit("ADD EAX, EBX");
+        }else if(op == "-=")
+        {
+               emit("SUB EAX, EBX");
+        }else if(op == "*="){
+            emit("MUL EBX");
+        }else if(op == "/="){
+            emit("CDQ");
+            emit("IDIV EBX");
+        }else {
+            emit("CDQ");
+            emit("IDIV EBX");
+            emit("MOV EAX, EDX");
+        }
         if (sym) emit("MOV " + sym->operand + ", EAX");
         return {};
     }
